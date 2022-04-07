@@ -2,6 +2,7 @@ import { Router } from "express";
 import {
   deleteEmployee,
   getEmployee,
+  getEmployeeNetSalary,
   getEmployees,
   insertEmployee,
   updateEmployee,
@@ -15,6 +16,7 @@ import {
 const employeeRouter = Router();
 employeeRouter.get("/employees", getEmployees);
 employeeRouter.get("/employees/:id", getEmployee);
+employeeRouter.get("/employees/:id/net-salary", getEmployeeNetSalary);
 employeeRouter.post(
   "/employees",
   validateSchemaMiddleware(employeeInsertSchema),

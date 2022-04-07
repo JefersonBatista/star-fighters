@@ -47,7 +47,7 @@ async function remove(id) {
   return connection.query("DELETE FROM employees WHERE id=$1", [id]);
 }
 
-export const employeesRepository = {
+export const employeeRepository = {
   insert,
   findAll,
   findById,
