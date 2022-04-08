@@ -107,6 +107,61 @@ async function remove(id) {
   await employeeRepository.remove(id);
 }
 
+async function calculateVacation(id, isSelling, startDate, vacationDaysAmount) {
+  const employee = await findById(id);
+
+  const { grossSalary } = employee;
+  const valuePerDay = grossSalary / 30;
+
+  const { vacationDaysAfterSell, vacationSellAmount } = sellVacation(
+    valuePerDay,
+    isSelling,
+    vacationDaysAmount
+  );
+
+  const deductedVacationSalary = getVacationSalaryWithTaxes(
+    valuePerDay,
+    vacationDaysAmount
+  );
+  const totalValue = deductedVacationSalary + vacationSellAmount;
+  const returnDate = getVacationReturningDay(startDate, vacationDaysAfterSell);
+
+  return {
+    totalValue,
+    returnDate,
+  };
+}
+
+function getVacationReturningDay(startDate, vacationDaysAmount) {
+  return dayjs(startDate).add(vacationDaysAmount, "days").format("DD/MM/YYYY");
+}
+
+function getVacationSalaryWithTaxes(valuePerDay, vacationDaysAmount) {
+  const vacationSalary = getVacationSalary(valuePerDay, vacationDaysAmount);
+  return calculateVacationTaxes(vacationSalary);
+}
+
+function getVacationSalary(valuePerDay, vacationDaysAmount) {
+  const valuePerVacationDays = valuePerDay * vacationDaysAmount;
+  return valuePerVacationDays + valuePerVacationDays / 3;
+}
+
+function calculateVacationTaxes(vacationSalary) {
+  const INSS = deductINSSFromSalary(vacationSalary);
+  const IRRF = deductIRRFFromSalary(INSS.deductedSalary);
+  const deductedVacationSalary = IRRF.deductedSalary;
+  return deductedVacationSalary;
+}
+
+function sellVacation(valuePerDay, isSelling, vacationDaysAmount) {
+  if (!isSelling)
+    return { vacationDaysAfterSell: vacationDaysAmount, vacationSellAmount: 0 };
+
+  const tenDaysValue = valuePerDay * 10;
+  const vacationSellAmount = tenDaysValue + tenDaysValue / 3;
+  return { vacationDaysAfterSell: vacationDaysAmount - 10, vacationSellAmount };
+}
+
 export const employeeService = {
   findAll,
   findById,
@@ -114,4 +169,5 @@ export const employeeService = {
   insert,
   update,
   remove,
+  calculateVacation,
 };

@@ -4,6 +4,7 @@ import {
   getEmployee,
   getEmployeeNetSalary,
   getEmployees,
+  getEmployeeVacation,
   insertEmployee,
   updateEmployee,
 } from "../controllers/employeeController.js";
@@ -17,6 +18,7 @@ const employeeRouter = Router();
 employeeRouter.get("/employees", getEmployees);
 employeeRouter.get("/employees/:id", getEmployee);
 employeeRouter.get("/employees/:id/net-salary", getEmployeeNetSalary);
+employeeRouter.get("/employees/:id/vacation", getEmployeeVacation);
 employeeRouter.post(
   "/employees",
   validateSchemaMiddleware(employeeInsertSchema),

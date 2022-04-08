@@ -19,6 +19,19 @@ export async function getEmployeeNetSalary(req, res) {
   res.send(netSalaryWithTaxes);
 }
 
+export async function getEmployeeVacation(req, res) {
+  const { id } = req.params;
+  const { isSelling, startDate, vacationDaysAmount } = req.body;
+
+  const vacation = await employeeService.calculateVacation(
+    id,
+    isSelling,
+    startDate,
+    vacationDaysAmount
+  );
+  res.send(vacation);
+}
+
 export async function insertEmployee(req, res) {
   const employee = req.body;
 
