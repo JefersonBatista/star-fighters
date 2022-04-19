@@ -1,5 +1,9 @@
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 import * as fighterRepository from "../repositories/fighterRepository.js";
+
+interface FighterRepo {
+  stargazers_count: number;
+}
 
 export async function find() {
   return fighterRepository.find();
@@ -24,14 +28,16 @@ export async function battle(firstUser: string, secondUser: string) {
 }
 
 async function getFighterRepos(username: string) {
-  const { data } = await axios.get(
+  const { data } = await axios.get<FighterRepo[]>(
     `https://api.github.com/users/${username}/repos`
   );
 
   return data;
 }
 
-async function getFighter(username: string) {
+async function getFighter(
+  username: string
+): Promise<fighterRepository.Fighter> {
   const fighter = await fighterRepository.findByUsername(username);
 
   if (!fighter) {
@@ -42,7 +48,7 @@ async function getFighter(username: string) {
   return fighter;
 }
 
-function getFighterStarCount(fighterRepos: any[]) {
+function getFighterStarCount(fighterRepos: FighterRepo[]) {
   const repoStars = fighterRepos.map((repo) => repo.stargazers_count);
   if (repoStars.length === 0) return 0;
 
@@ -50,8 +56,8 @@ function getFighterStarCount(fighterRepos: any[]) {
 }
 
 async function getBattleResult(
-  firstFighter: any,
-  secondFighter: any,
+  firstFighter: fighterRepository.Fighter,
+  secondFighter: fighterRepository.Fighter,
   firstUserStarCount: number,
   secondUserStarCount: number
 ) {

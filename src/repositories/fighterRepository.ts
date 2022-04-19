@@ -1,7 +1,15 @@
 import { connection } from "../database.js";
 
+export interface Fighter {
+  id: number;
+  username: string;
+  wins: number;
+  losses: number;
+  draws: number;
+}
+
 export async function find() {
-  const result = await connection.query(
+  const result = await connection.query<Fighter>(
     `
       SELECT * 
         FROM fighters 
@@ -12,7 +20,7 @@ export async function find() {
 }
 
 export async function findByUsername(username: string) {
-  const result = await connection.query(
+  const result = await connection.query<Fighter>(
     `
     SELECT * FROM fighters WHERE username=$1
     `,
@@ -22,7 +30,7 @@ export async function findByUsername(username: string) {
 }
 
 export async function insert(username: string) {
-  const result = await connection.query(
+  const result = await connection.query<{ id: number }>(
     `
     INSERT INTO fighters (username, wins, losses, draws) 
     VALUES ($1, 0, 0, 0)
@@ -38,7 +46,7 @@ export async function updateStats(
   id: number,
   column: "wins" | "losses" | "draws"
 ) {
-  connection.query(
+  connection.query<any, [number]>(
     `
     UPDATE fighters 
      SET ${column}=${column}+1
