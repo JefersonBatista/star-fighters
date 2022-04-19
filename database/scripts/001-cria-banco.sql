@@ -1,9 +1,7 @@
-CREATE TABLE employees (
+CREATE TABLE fighters (
 	id SERIAL PRIMARY KEY,
-	"fullName" TEXT NOT NULL,
-	"birthDate" DATE NOT NULL,
-	"position" TEXT NOT NULL,
-	"dateJoined" DATE NOT NULL DEFAULT NOW(),
-	"isActive" BOOLEAN NOT NULL DEFAULT FALSE,
-	"grossSalary" INTEGER NOT NULL
+	username TEXT NOT NULL,
+	wins INTEGER NOT NULL,
+	losses INTEGER NOT NULL,
+	draws INTEGER NOT NULL
 );
